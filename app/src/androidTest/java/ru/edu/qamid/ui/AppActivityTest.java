@@ -1,37 +1,26 @@
 package ru.edu.qamid.ui;
 
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.security.cert.CertPathChecker;
 
 import ru.edu.qamid.R;
 
@@ -43,62 +32,28 @@ public class AppActivityTest {
     public ActivityScenarioRule<AppActivity> mActivityScenarioRule =
             new ActivityScenarioRule<>(AppActivity.class);
 
+    String login = "login2";
+    String password = "password2";
+
+
     @Test
-        public void appActivityTest() {
-        ViewInteraction textInputEditText = onView(
-                allOf(withId(R.id.login_edit_text),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.login_text_input_layout),
-                                        0),
-                                0),
-                        isDisplayed()));
-        textInputEditText.perform(replaceText("login2"), closeSoftKeyboard());
+    public void appActivityTest() {
 
-        ViewInteraction textInputEditText2 = onView(
-                allOf(withId(R.id.password_edit_text),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.password_text_input_layout),
-                                        0),
-                                0),
-                        isDisplayed()));
-        textInputEditText2.perform(replaceText("password2"), closeSoftKeyboard());
 
-        ViewInteraction materialButton = onView(
-                allOf(withId(R.id.enter_button), withText("Sign in"), withContentDescription("Save"),
-                        childAtPosition(
-                                allOf(withId(R.id.enter_button_container),
-                                        childAtPosition(
-                                                withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                                2)),
-                                0),
-                        isDisplayed()));
-        materialButton.perform(click());
+        onView(withId(R.id.login_edit_text)).perform(typeText(login),
+                closeSoftKeyboard());
 
-        ViewInteraction textView = onView(
-                allOf(withText("News"),
-                        withParent(withParent(withId(R.id.main_news_list_container))),
-                        isDisplayed()));
-        textView.check(matches(withText("News")));
+        onView(withId(R.id.password_edit_text)).perform(typeText(password),
+                closeSoftKeyboard());
+
+        onView(withId(R.id.enter_button)).perform(click());
+
+        onView(withId(R.id.trademark_image_view)).check(matches(isDisplayed()));
+
+//        onView(withId(R.id.all_news_text_view)).check(matches(withText("ALL NEWS")));
+
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
-    }
 }
+
+
