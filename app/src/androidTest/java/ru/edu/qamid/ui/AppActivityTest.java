@@ -14,14 +14,20 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
 
+import static java.nio.file.Files.exists;
+
+import androidx.test.espresso.IdlingRegistry;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ru.edu.qamid.EspressoIdlingResources;
 import ru.edu.qamid.R;
 
 @LargeTest
@@ -34,6 +40,16 @@ public class AppActivityTest {
 
     String login = "login2";
     String password = "password2";
+
+    @Before // Выполняется перед тестами
+    public void registerIdlingResources() { //Подключаемся к “счетчику”
+        IdlingRegistry.getInstance().register(EspressoIdlingResources.idlingResource);
+    }
+    @After // Выполняется после тестов
+    public void unregisterIdlingResources() { //Отключаемся от “счетчика”
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResources.idlingResource);
+    }
+
 
 
     @Test
@@ -48,9 +64,10 @@ public class AppActivityTest {
 
         onView(withId(R.id.enter_button)).perform(click());
 
-        onView(withId(R.id.trademark_image_view)).check(matches(isDisplayed()));
+//        onView(withId(R.id.trademark_image_view)).check(matches(isDisplayed()));
 
-//        onView(withId(R.id.all_news_text_view)).check(matches(withText("ALL NEWS")));
+
+        onView(withId(R.id.all_news_text_view)).check(matches(withText("ALL NEWS")));
 
     }
 

@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ru.edu.qamid.EspressoIdlingResources
 import ru.edu.qamid.R
 import ru.edu.qamid.api.UserApi
 import ru.edu.qamid.auth.AppAuth
@@ -232,8 +233,10 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
         }
 
         lifecycleScope.launch {
+            EspressoIdlingResources.increment();
             delay(3_000)
             authViewModel.authorization()
+            EspressoIdlingResources.decrement();
         }
     }
 
