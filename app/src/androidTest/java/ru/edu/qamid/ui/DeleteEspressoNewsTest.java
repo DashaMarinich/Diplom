@@ -3,8 +3,7 @@ package ru.edu.qamid.ui;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -27,7 +26,6 @@ import androidx.test.filters.LargeTest;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,54 +34,62 @@ import ru.edu.qamid.R;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class AppActivityTest2 {
+public class DeleteEspressoNewsTest {
 
     @Rule
     public ActivityScenarioRule<AppActivity> mActivityScenarioRule =
             new ActivityScenarioRule<>(AppActivity.class);
 
     @Test
-    public void appActivityTest2() {
-        ViewInteraction textInputEditText = onView(
-                allOf(withId(R.id.login_edit_text),
+    public void deleteEspressoNewsTest() {
+        ViewInteraction materialTextView = onView(
+                allOf(withId(R.id.all_news_text_view), withText("All news"),
                         childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.login_text_input_layout),
-                                        0),
-                                0),
+                                allOf(withId(R.id.main_news_list_container),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                0)),
+                                1),
                         isDisplayed()));
-        textInputEditText.perform(replaceText("login2"), closeSoftKeyboard());
-
-        ViewInteraction textInputEditText2 = onView(
-                allOf(withId(R.id.password_edit_text),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.password_text_input_layout),
-                                        0),
-                                0),
-                        isDisplayed()));
-        textInputEditText2.perform(replaceText("password2"), closeSoftKeyboard());
+        materialTextView.perform(click());
 
         ViewInteraction materialButton = onView(
-                allOf(withId(R.id.enter_button), withText("Sign in"), withContentDescription("Save"),
+                allOf(withId(R.id.news_edit_button), withContentDescription("News editing button"),
                         childAtPosition(
-                                allOf(withId(R.id.enter_button_container),
-                                        childAtPosition(
-                                                withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                                2)),
-                                0),
+                                childAtPosition(
+                                        withId(R.id.news_list_container),
+                                        0),
+                                3),
                         isDisplayed()));
         materialButton.perform(click());
 
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.all_news_text_view), withText("ALL NEWS"),
-                        withParent(allOf(withId(R.id.main_news_list_container),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class)))),
+        ViewInteraction appCompatImageView = onView(
+                allOf(withId(R.id.news_item_delete_image_view), withContentDescription("News delete button"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.news_item_material_card_view),
+                                        0),
+                                14),
                         isDisplayed()));
-        textView.check(matches(withText("ALL NEWS")));
+        appCompatImageView.perform(click());
+
+        ViewInteraction materialButton2 = onView(
+                allOf(withId(android.R.id.button2), withText("Cancel"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.ScrollView")),
+                                        0),
+                                2)));
+        materialButton2.perform(scrollTo(), click());
+
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.news_item_title_text_view), withText("Фильтр Объявление 1795377375554"),
+                        withParent(withParent(withId(R.id.news_item_material_card_view))),
+                        isDisplayed()));
+        textView.check(matches(withText("Фильтр Объявление 1795377375554")));
     }
 
-    private static Matcher<View> childAtPosition(
+    public static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
         return new TypeSafeMatcher<View>() {
